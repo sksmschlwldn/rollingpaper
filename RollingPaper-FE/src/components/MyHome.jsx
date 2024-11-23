@@ -77,16 +77,17 @@ const MyHome = () => {
     setIsModalOpen(false); // 모달 상태가 닫힘으로 설정
   };
 
+  // 롤링페이퍼 초기화
   const handleDeleteAll = async () => {
     const confirmDelete = window.confirm(
-      "정말로 모든 메모를 삭제하시겠습니까?"
+      "정말로 롤링페이퍼를 초기화 하시겠습니까?"
     );
     if (!confirmDelete) return;
 
     try {
       const response = await axios.delete("http://localhost:3002/api/messages");
       if (response.data.success) {
-        alert("모든 메모가 삭제되었습니다.");
+        alert("롤링페이퍼가 초기화되었습니다.");
         window.location.reload();
       } else {
         alert("메모 삭제에 실패했습니다.");

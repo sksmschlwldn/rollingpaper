@@ -115,7 +115,7 @@ app.get("/api/messages/:id", (req, res) => {
   });
 });
 
-// 모든 메시지 삭제 API
+// 롤링페이퍼 초기화 API
 app.delete("/api/messages", (req, res) => {
   const query = "DELETE FROM messages";
 

@@ -1,5 +1,8 @@
 import styled from "styled-components";
 
+// Myhome 컴포넌트에서 하나의 메모를 클릭시,
+// 해당 메모의 상세 내용(message)을 보여주는 컴포넌트
+
 const ModalWrapper = styled.div`
   text-align: left;
   display: block;
@@ -39,27 +42,13 @@ const ExitImg = styled.img`
   right: 8%;
   width: 35px;
 `;
-const DeleteButton = styled.button`
-  position: absolute;
-  top: 72%;
-  left: 25%;
-  border-radius: 10px;
-  background: #ffffff;
-  color: #5e7897;
-  font-weight: bold;
-  width: 150px;
-  height: 40px;
-  font-size: 16px;
-  border: none;
-  margin-top: 100px;
-`;
 
 const MemoModal = ({ closeModal, name, message, id }) => {
   return (
     <ModalWrapper>
       <MemoImg src="/image/memo.svg" />
       <Name>{name}</Name>
-      <Content>{message}</Content> {/* message가 여기에 표시됩니다 */}
+      <Content>{message}</Content>
       <ExitImg onClick={closeModal} src="/image/exit2.svg" />
     </ModalWrapper>
   );

@@ -2,8 +2,11 @@ import { Link } from "react-router-dom";
 import React, { useState } from "react";
 import styled from "styled-components";
 import Memobox from "./MemoBox";
-import WriteButton from "./WriteButton"; // 버튼 컴포넌트
+import WriteButton from "./WriteButton";
 import WriteModal from "./WriteModal";
+
+// 이 프로젝트의 Home화면이 되는 컴포넌트.
+// 메모를 작성하고, 작성된 메모(이름만)를 보여주는 역할
 
 const HomeContainer = styled.div`
   position: relative;
@@ -49,14 +52,13 @@ const AccountImg = styled.img`
 `;
 
 const WriterHome = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newMemo, setNewMemo] = useState(null); // 새로운 메모 상태 추가
+  const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열기 관리
+  const [newMemo, setNewMemo] = useState(null); // 새로운 메모 상태
+  const openModal = () => setIsModalOpen(true); //모달 열기 함수
+  const closeModal = () => setIsModalOpen(false); // 모달 닫기 함수
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-
+  // 새로운 메모 처리 함수
   const handleNewMemo = (memo) => {
-    // 새로운 메모가 작성되었을 때 상태 업데이트
     setNewMemo(memo);
   };
 
@@ -68,8 +70,10 @@ const WriterHome = () => {
       <Title>
         <Highlight>지우</Highlight> 의 롤링페이퍼를 꾸며주세요
       </Title>
+      {/* 새로운 메모가 있을 경우, 메모박스를 렌더링 */}
       <Memobox newMemo={newMemo} onClickMemo={() => {}} />
       <WriteButton onClick={openModal} />
+      {/* 모달이 열려 있으면 화면에 띄우기 */}
       {isModalOpen && (
         <Overlay onClick={closeModal}>
           <WriteModal closeModal={closeModal} onNewMemo={handleNewMemo} />

@@ -3,6 +3,10 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
+// 로그인 화면 구성 컴포넌트
+// 롤링페이퍼의 주인 master로 로그인시 메모의 내용 또한 열람 가능
+// id : master pw : 1234 로 로그인.
+
 const SignContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -50,25 +54,28 @@ const SubmitButton = styled.button`
 `;
 
 const SignIn = () => {
-  const [id, setId] = useState("");
-  const [password, setPassword] = useState("");
+  const [id, setId] = useState(""); // 로그인 ID
+  const [password, setPassword] = useState(""); // 로그인 PW
   const navigate = useNavigate();
-
+  
+  // 로그인 . 폼제출 처리
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
+      // 서버에 로그인 요청
       const response = await axios.post("http://localhost:3002/api/login", {
         id,
         password,
       });
-
+      
+      // 로그인 성공 시
       if (response.data.success) {
         localStorage.setItem("isLoggedIn", true); // 로그인 상태 저장
         alert("로그인 성공!");
         navigate("/master"); // 로그인 성공 시 master으로 이동
       } else {
-        alert("로그인 실패: " + response.data.message);
+        alert("로그인 실패: " + response.data.message); // 실패시 오류 메시지 
       }
     } catch (error) {
       console.error("로그인 중 오류 발생:", error);

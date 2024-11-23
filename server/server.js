@@ -6,18 +6,19 @@ const cors = require("cors");
 const app = express();
 const PORT = 3002;
 
-// Middleware
-app.use(cors()); // CORS 설정
+// Middleware 설정
+app.use(cors()); // CORS 설정 (다른 도메인에서 API 호출 가능)
 app.use(bodyParser.json()); // JSON 파싱
 
-// MySQL Connection
+// MySQL DB 연결
 const db = mysql.createConnection({
-  host: "localhost",
+  host: "localhost", // MySQL 호스트 (로컬)
   user: "root", // MySQL 사용자명
   password: "jiwoo2003@", // MySQL 비밀번호
   database: "rollingpaper", // DB 이름
 });
 
+// MySQL 연결 확인
 db.connect((err) => {
   if (err) {
     console.error("MySQL 연결 오류:", err);
@@ -28,9 +29,9 @@ db.connect((err) => {
 
 // 로그인 API
 app.post("/api/login", (req, res) => {
-  const { id, password } = req.body;
+  const { id, password } = req.body; // 요청에서 id, pw 추출
 
-  // Master 계정 확인
+  // Master 계정 확인 (기본 계정)
   if (id === "master" && password === "1234") {
     return res.json({ success: true, message: "Master 로그인 성공" });
   }
@@ -43,6 +44,7 @@ app.post("/api/login", (req, res) => {
       return res.status(500).json({ success: false, message: "서버 오류" });
     }
 
+    // 사용자가 존재하면 로그인 성공 메시지
     if (results.length > 0) {
       res.json({ success: true, message: "로그인 성공" });
     } else {
@@ -54,17 +56,18 @@ app.post("/api/login", (req, res) => {
   });
 });
 
-// 메시지 제출 API
+// 메모(메시지) 제출 API
 app.post("/api/submit-message", (req, res) => {
-  const { name, message } = req.body;
+  const { name, message } = req.body; // 요청에서 name, message 출력
 
+  // 이름, 메시지 모두 입력되어야 함
   if (!name || !message) {
     return res.json({
       success: false,
       message: "이름과 메시지를 모두 입력해야 합니다.",
     });
   }
-
+  // 메모(메시지) 저장 쿼리 실행
   const query = "INSERT INTO messages (name, message) VALUES (?, ?)";
   db.query(query, [name, message], (err, result) => {
     if (err) {
@@ -78,8 +81,9 @@ app.post("/api/submit-message", (req, res) => {
   });
 });
 
+// 모든 메시지(메모) 조회 API
 app.get("/api/messages", (req, res) => {
-  const query = "SELECT * FROM messages"; // messages 테이블에서 모든 메모 가져오기
+  const query = "SELECT * FROM messages";
   db.query(query, (err, results) => {
     if (err) {
       console.error("DB 조회 중 오류 발생:", err);
@@ -90,7 +94,7 @@ app.get("/api/messages", (req, res) => {
   });
 });
 
-// 특정 메모를 가져오는 API
+// 특정 메모(메시지)를 가져오는 API
 app.get("/api/messages/:id", (req, res) => {
   const messageId = req.params.id; // URL 파라미터에서 id를 가져옴
   const query = "SELECT * FROM messages WHERE id = ?";
@@ -107,8 +111,26 @@ app.get("/api/messages/:id", (req, res) => {
         .json({ success: false, message: "메모를 찾을 수 없습니다." });
     }
 
-    // 메모 데이터를 응답
     res.json({ success: true, message: results[0] });
+  });
+});
+
+// 모든 메시지 삭제 API
+app.delete("/api/messages", (req, res) => {
+  const query = "DELETE FROM messages";
+
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error("메시지 삭제 중 오류 발생:", err);
+      return res
+        .status(500)
+        .json({ success: false, message: "메시지 삭제에 실패했습니다." });
+    }
+
+    res.json({
+      success: true,
+      message: "모든 메시지가 성공적으로 삭제되었습니다.",
+    });
   });
 });
 

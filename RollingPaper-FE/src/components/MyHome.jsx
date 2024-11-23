@@ -3,6 +3,10 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import Memobox from "./MemoBox";
 import MemoModal from "./MemoModal";
+import axios from "axios";
+
+// 로그인 이후의 화면을 보여주는 컴포넌트
+// 메모의 상세정보(message)를 확인 할 수 있음.
 
 const HomeContainer = styled.div`
   position: relative;
@@ -46,19 +50,51 @@ const AccountImg = styled.img`
   top: 30px;
   right: 10px;
 `;
+const AllDeleteButton = styled.button`
+  width: 170px;
+  height: 46px;
+  background: #5e7897;
+  font-weight: 600;
+  font-size: 22px;
+  color: #ffffff;
+  text-align: center;
+  border-radius: 20px;
+  border: none;
+  outline: none;
+  margin-top: 30px;
+`;
 
 const MyHome = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalData, setModalData] = useState({ name: "", message: "" }); // content -> message로 변경
+  const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
+  const [modalData, setModalData] = useState({ name: "", message: "" }); // 모달이 표시할 데이터
 
   const handleOpenModal = (name, message) => {
-    // content -> message로 변경
     setModalData({ name, message }); // DB에서 가져온 message를 modalData에 저장
-    setIsModalOpen(true);
+    setIsModalOpen(true); // 모달 상태가 열림으로 설정
   };
 
   const handleCloseModal = () => {
-    setIsModalOpen(false);
+    setIsModalOpen(false); // 모달 상태가 닫힘으로 설정
+  };
+
+  const handleDeleteAll = async () => {
+    const confirmDelete = window.confirm(
+      "정말로 모든 메모를 삭제하시겠습니까?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      const response = await axios.delete("http://localhost:3002/api/messages");
+      if (response.data.success) {
+        alert("모든 메모가 삭제되었습니다.");
+        window.location.reload();
+      } else {
+        alert("메모 삭제에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("메모 삭제 오류:", error);
+      alert("서버와의 연결에 문제가 발생했습니다. 다시 시도해주세요.");
+    }
   };
 
   return (
@@ -69,17 +105,19 @@ const MyHome = () => {
       <Title>
         <Highlight>지우</Highlight>의 롤링페이퍼를 꾸며주세요
       </Title>
-      <Memobox onClickMemo={handleOpenModal} />
-
+      <Memobox onClickMemo={handleOpenModal} />{" "}
+      {/* Memobox 클릭 시 handleOpenModal 호출 */}
+      {/* 모달이 열려 있으면 화면에 띄우기 */}
       {isModalOpen && (
         <Overlay>
           <MemoModal
             closeModal={handleCloseModal}
-            name={modalData.name}
-            message={modalData.message} // message로 전달
+            name={modalData.name} // 메모 작성자 이름 전달
+            message={modalData.message} // 메모 메시지 전달
           />
         </Overlay>
       )}
+      <AllDeleteButton onClick={handleDeleteAll}>전체 삭제</AllDeleteButton>
     </HomeContainer>
   );
 };

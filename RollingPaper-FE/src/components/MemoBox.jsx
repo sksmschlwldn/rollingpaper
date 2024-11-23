@@ -2,6 +2,10 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styled from "styled-components";
 
+// 전체 메모들을 보여주는(시각화해주는) 컴포넌트
+// DB에서 정보를 가져와 화면에 보여줌.
+// MyHome, WriterHome 컴포넌트에서 모두 사용됨.
+
 const MemoContainer = styled.div`
   width: 330px;
   height: 490px;
@@ -41,6 +45,7 @@ const MemoName = styled.div`
 const Memobox = ({ onClickMemo, newMemo, onDelete }) => {
   const [memos, setMemos] = useState([]);
 
+  // DB에서 메모 불러오는 함수
   const fetchMemos = async () => {
     try {
       const response = await axios.get("http://localhost:3002/api/messages");
@@ -51,34 +56,32 @@ const Memobox = ({ onClickMemo, newMemo, onDelete }) => {
       console.error("메모 불러오기 오류:", error);
     }
   };
-
+  // 컴포넌트가 마운트 될 때 메모를 가져오는 useEffect
   useEffect(() => {
     fetchMemos();
   }, []);
 
+  // 새로운 메모가 전달될 때 마다 memos 상태 업데이트
   useEffect(() => {
     if (newMemo) {
       setMemos((prevMemos) => [...prevMemos, newMemo]);
     }
   }, [newMemo]);
 
-  const handleDelete = (id) => {
-    setMemos((prevMemos) => prevMemos.filter((memo) => memo.id !== id)); // 메모 삭제
-  };
-
   return (
     <MemoContainer>
       <MemoWrapper>
         {memos.length === 0 ? (
-          <div>롤링페이퍼가 작성되지 않았습니다.</div> // 비어있는 경우 메시지 출력
+          <div>롤링페이퍼가 작성되지 않았습니다.</div> // 메모가 없는 경우 메시지 출력
         ) : (
           memos.map((memo) => (
             <Memo key={memo.id}>
+              {/* 각 메모 이미지 클릭 시 해당 메모의 상세 내용을 보여줌 */}
               <MemoImg
                 src="/image/memo2.png"
                 onClick={() => onClickMemo(memo.name, memo.message, memo.id)} // id도 전달
               />
-              <MemoName>{memo.name}</MemoName>
+              <MemoName>{memo.name}</MemoName> {/* 메모 작성자 이름만 화면에 띄워줌 */}
             </Memo>
           ))
         )}

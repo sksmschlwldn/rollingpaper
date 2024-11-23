@@ -2,6 +2,9 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
+// 로그아웃 화면 구성 컴포넌트
+// MyHome(로그인 상태)에서 localStage를 초기화하며 홈(로그아웃)으로 빠져나옴.
+
 const LogoutContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -34,7 +37,7 @@ const LogOut = () => {
 
   const handleLogout = () => {
     localStorage.clear(); // localStorage 초기화
-    navigate("/"); // 홈 화면으로 리디렉션
+    navigate("/"); // 홈 화면으로 이동
   };
 
   return (

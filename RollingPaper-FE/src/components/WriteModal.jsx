@@ -1,8 +1,10 @@
 import styled from "styled-components";
 import React, { useState } from "react";
-import axios from "axios"; // axios import
+import axios from "axios";
 
-// 스타일 컴포넌트
+// 메모 작성 모달 컴포넌트
+// 사용자로부터 이름과 메시지를 입력받아 서버에 전달하고, 메모를 작성하는 역할
+
 const ModalWrapper = styled.div`
   max-width: 400px;
   width: 100%;
@@ -84,74 +86,17 @@ const ExitButton = styled.button`
   color: #ffffff;
   margin: 3px;
 `;
-// const WriteModal = ({ closeModal, onAddMemo }) => {
-//   const [name, setName] = useState("");
-//   const [message, setMessage] = useState("");
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-
-//     try {
-//       const response = await axios.post(
-//         "http://localhost:3002/api/submit-message",
-//         {
-//           name,
-//           message,
-//         }
-//       );
-
-//       if (response.data.success) {
-//         const newMemo = response.data.memo; // 서버에서 저장된 메모 반환
-//         onAddMemo(newMemo); // 부모 컴포넌트로 새로운 메모 전달
-//       } else {
-//         alert(response.data.message);
-//       }
-//     } catch (error) {
-//       console.error("메모 제출 오류:", error);
-//       alert("서버와 연결할 수 없습니다. 다시 시도해주세요.");
-//     }
-//   };
-
-//   return (
-//     <ModalWrapper onClick={(e) => e.stopPropagation()}>
-//       <form onSubmit={handleSubmit}>
-//         <Title>작성하기</Title>
-//         <InputWrapper>
-//           <SubTitle>이름</SubTitle>
-//           <NameBox
-//             placeholder="이름을 입력하시오."
-//             value={name}
-//             onChange={(e) => setName(e.target.value)}
-//             required
-//           />
-//           <SubTitle>지우에게 하고 싶은 말</SubTitle>
-//           <MessageBox
-//             placeholder="메시지를 입력하시오."
-//             value={message}
-//             onChange={(e) => setMessage(e.target.value)}
-//             required
-//           />
-//           <ButtonWrapper>
-//             <ExitButton type="button" onClick={closeModal}>
-//               취소하기
-//             </ExitButton>
-//             <SendButton type="submit">보내기</SendButton>
-//           </ButtonWrapper>
-//         </InputWrapper>
-//       </form>
-//     </ModalWrapper>
-//   );
-// };
 
 const WriteModal = ({ closeModal, onNewMemo }) => {
-  const [name, setName] = useState("");
-  const [message, setMessage] = useState("");
+  const [name, setName] = useState(""); // 이름상태
+  const [message, setMessage] = useState(""); // 메시지 상태
 
+  // 메모 폼 제출시 서버로 메모 보내기 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:3002/api/submit-message",
+        "http://localhost:3002/api/submit-message", // 서버 API로 메모 전송
         {
           name,
           message,
@@ -161,9 +106,9 @@ const WriteModal = ({ closeModal, onNewMemo }) => {
       if (response.data.success) {
         const newMemo = { id: response.data.id, name, message }; // 새 메모 데이터
         onNewMemo(newMemo); // 부모 컴포넌트에 새로운 메모 전달
-        closeModal();
+        closeModal(); // 모달 닫기
       } else {
-        alert(response.data.message);
+        alert(response.data.message); //실패시 메시지 출력
       }
     } catch (error) {
       console.error("메모 제출 오류:", error);

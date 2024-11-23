@@ -22,7 +22,7 @@ function App() {
             path="/master"
             element={isLoggedIn ? <MyHome /> : <Navigate to="/signin" />}
           />
-          <Route path="/logout" element={<LogOut />} />
+          <Route path="/logout" element={<LogOut/>}/>
         </Routes>
       </BrowserRouter>
     </MainLayout>
